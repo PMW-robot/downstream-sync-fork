@@ -1,5 +1,5 @@
 name: Sync Downstream Repo
-run-name: "Sync to downstream repository | ${{ github.event.pull_request.title }}"
+run-name: "${{ github.event_name == 'workflow_dispatch' && 'Manual Sync to downstream' || format('Sync to downstream repository | {0}', github.event.pull_request.title) }}"
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   sync:
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
