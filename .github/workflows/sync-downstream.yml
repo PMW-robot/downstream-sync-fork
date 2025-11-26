@@ -18,16 +18,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Merge main to downstream
+      - name: Push to downstream
         env:
           DOWNSTREAM_URL: https://github.com/PMW-robot/downstream-sync-fork.git
         run: |
           git remote add downstream  ${{ env.DOWNSTREAM_URL }}
           git fetch downstream
           git merge downstream/main
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main          
+          git push downstream
