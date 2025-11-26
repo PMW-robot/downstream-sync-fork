@@ -1,5 +1,5 @@
 name: Sync Downstream Repo
-run-name: "Sync to downstream repository | ${{ github.event.pull_request.title }}"
+run-name: "${{ github.event_name == 'workflow_dispatch' && 'Manual Sync to downstream' || format('Sync to downstream repository | {0}', github.event.pull_request.title) }}"
 
 on:
   pull_request:
@@ -11,8 +11,8 @@ concurrency:
 
 jobs:
   sync:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
 
       - name: Push to downstream
         env:
-          DOWNSTREAM_URL: https://github.com/PMW-robot/downstream-sync-fork
+          DOWNSTREAM_URL: https://github.com/PMW-robot/downstream-fork.git
         run: |
           git remote add downstream ${DOWNSTREAM_URL}
           git fetch downstream
