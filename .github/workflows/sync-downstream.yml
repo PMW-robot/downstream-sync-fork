@@ -1,8 +1,13 @@
 name: Sync Downstream Repo
+run-name: "Sync to downstream repository | ${{ github.event.pull_request.title }}"
 
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
 
 jobs:
   sync:
